@@ -55,15 +55,38 @@ section{min-height:100vh;padding:90px 20px;display:flex;flex-direction:column;al
 .skip{font-size:12px;opacity:.5;text-align:center;margin-top:10px}
 
 /* ===== VÒNG QUAY LỜI CHÚC ===== */
-.counter{font-weight:500;color:var(--rose-d)}
-.wheel-wrap{position:relative;display:flex;flex-direction:column;align-items:center;gap:20px;width:100%}
-.wheel{width:min(420px,84vw);aspect-ratio:1;border-radius:50%;position:relative;border:10px solid #fff;box-shadow:0 14px 34px #a84a6644,inset 0 0 0 3px #e8b04a;transition:transform 5s cubic-bezier(.12,.72,.08,1);overflow:hidden}
-.wheel-label{position:absolute;left:50%;top:50%;width:42%;height:32px;display:flex;align-items:center;justify-content:center;transform-origin:0 50%;font-weight:600;font-size:clamp(12px,3vw,17px);color:#49302d;text-shadow:0 1px #fff9;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 8px}
-.wheel-center{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:16%;aspect-ratio:1;border-radius:50%;background:#fff7e7;border:5px solid var(--gold);box-shadow:0 2px 8px #71344666}
-.wheel-pointer{position:absolute;top:-19px;left:50%;transform:translateX(-50%);z-index:2;color:var(--rose-d);font-size:46px;line-height:1;filter:drop-shadow(0 3px 2px #fff)}
-#spinBtn{border:0;border-radius:999px;background:var(--rose);color:#fff;padding:14px 30px;font-size:17px;font-weight:600;box-shadow:0 7px 20px #e85d7555}
-#spinBtn:disabled{opacity:.6;cursor:wait}
-#spinStatus{min-height:25px;color:var(--rose-d);text-align:center}
+  .bb-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:34px 28px;max-width:620px;margin:34px auto 10px}
+.bb{position:relative;aspect-ratio:1/1.1;cursor:pointer;transition:transform .3s}
+.bb:hover{transform:translateY(-4px)}
+.bb-body{position:absolute;left:8%;right:8%;bottom:14%;height:52%;border-radius:8px;
+  background:hsl(var(--h) 75% 72%);box-shadow:0 10px 22px rgba(0,0,0,.15)}
+.bb-body::before{content:"";position:absolute;left:50%;top:0;bottom:0;width:16%;transform:translateX(-50%);
+  background:hsl(calc(var(--h) + 180) 70% 62%)}
+.bb-lid{position:absolute;left:3%;right:3%;bottom:62%;height:16%;border-radius:6px;z-index:2;
+  background:hsl(var(--h) 75% 64%);transition:transform .6s cubic-bezier(.3,1.6,.5,1),opacity .6s}
+.bb-lid::before{content:"";position:absolute;left:50%;top:0;bottom:0;width:15%;transform:translateX(-50%);
+  background:hsl(calc(var(--h) + 180) 70% 58%)}
+.bb-bow{position:absolute;left:50%;bottom:100%;transform:translateX(-50%);width:44%;height:60%;transition:.4s}
+.bb-bow i{position:absolute;bottom:0;width:50%;height:100%;border:5px solid hsl(calc(var(--h) + 180) 70% 55%);
+  border-radius:50% 50% 0 50%}
+.bb-bow i:first-child{left:0}
+.bb-bow i:last-child{right:0;border-radius:50% 50% 50% 0}
+.bb-name{position:absolute;left:0;right:0;bottom:0;text-align:center;font-weight:600;font-size:.95rem}
+.bb-card{position:absolute;left:50%;bottom:40%;transform:translate(-50%,0) scale(.4);opacity:0;font-size:2rem;z-index:1;
+  transition:transform .8s ease-out,opacity .4s}
+.bb.selected{animation:bbWiggle .5s ease-in-out infinite}
+.bb.selected .bb-body{box-shadow:0 0 0 4px #fff,0 0 22px hsl(var(--h) 80% 60%)}
+.bb.opening{animation:none}
+.bb.opening .bb-lid,.bb.opened .bb-lid{transform:translateY(-70%) rotate(-20deg);opacity:.0}
+.bb.opening .bb-bow,.bb.opened .bb-bow{transform:translateX(-50%) scale(0);opacity:0}
+.bb.opening .bb-card{transform:translate(-50%,-120%) scale(1.2);opacity:1}
+.bb.opened .bb-body{filter:saturate(.6) brightness(1.05)}
+.bb-spark{position:absolute;left:50%;top:45%;width:8px;height:8px;border-radius:50%;pointer-events:none;
+  background:hsl(var(--sh) 90% 60%);animation:bbBurst .8s ease-out forwards}
+.bb-status{text-align:center;opacity:.75;margin-top:6px}
+@keyframes bbWiggle{0%,100%{transform:scale(1.06) rotate(0)}25%{transform:scale(1.06) rotate(-4deg)}75%{transform:scale(1.06) rotate(4deg)}}
+@keyframes bbBurst{to{transform:translate(var(--dx),var(--dy)) scale(.2);opacity:0}}
+@media(max-width:560px){.bb-grid{grid-template-columns:repeat(2,1fr);gap:28px 22px}}
 .m-photos{display:flex;gap:9px;flex-wrap:wrap;margin-top:16px}
 .m-photos img{width:calc(50% - 5px);max-height:180px;object-fit:cover;border-radius:8px;cursor:zoom-in;background:#fff}
 .m-photos:empty{display:none}
@@ -197,10 +220,9 @@ section{min-height:100vh;padding:90px 20px;display:flex;flex-direction:column;al
 </section>
 
 <section id="notes">
-  <h2 class="title script reveal">Những lời nhắn nhỏ gửi cô</h2>
-  <p class="sub reveal">Cô quay vòng xoay để mở lời nhắn bất ngờ của từng bạn nhé!</p>
-  <p class="counter" id="counter"></p>
-  <div class="wheel-wrap"><div class="wheel-pointer" aria-hidden="true">▼</div><div class="wheel" id="wheel" aria-label="Vòng quay lời chúc"></div><button id="spinBtn" type="button">Quay vòng xoay ✨</button><p id="spinStatus" aria-live="polite"></p></div>
+  <p class="sub">Cô chọn từng hộp quà để mở lời nhắn bất ngờ của từng bạn nhé!</p>
+<div class="notes-grid bb-grid" id="bbGrid"></div>
+<p class="bb-status" id="bbStatus">Chạm một hộp để chọn, chạm lần nữa để mở 🎁</p>
   <a href="#photos" class="next show" id="notesNext">Kỷ niệm 20/10 ↓</a>
 </section>
 
@@ -287,10 +309,60 @@ const DATA = {
   photoNote:'Ảnh ngày 20/10 của lớp mình sẽ xuất hiện ở đây khi được thêm vào.',
   finalWish:'Cảm ơn cô Trang vì đã biến 12A6 thành một gia đình thật sự. Năm cuối cấp này, chúng em hứa sẽ cố gắng thật nhiều để cô tự hào. Chúc cô một ngày 20/11 ngập tràn niềm vui, hoa và yêu thương!'
 };
+const bbGrid = document.getElementById('bbGrid');
+const bbStatus = document.getElementById('bbStatus');
+const bbOpened = new Set();
+let bbSel = -1;
+
+DATA.notes.forEach((n, i) => {
+  const b = document.createElement('div');
+  b.className = 'bb';
+  b.style.setProperty('--h', Math.floor(Math.random() * 360));
+  b.innerHTML = `<div class="bb-card">💌</div>
+    <div class="bb-lid"><div class="bb-bow"><i></i><i></i></div></div>
+    <div class="bb-body"></div>
+    <div class="bb-name">Hộp quà số ${i + 1}</div>`;
+  b.onclick = () => bbClick(i, b);
+  bbGrid.appendChild(b);
+});
+
+function bbBurst(b){
+  for (let k = 0; k < 16; k++){
+    const s = document.createElement('span');
+    const a = Math.random() * Math.PI * 2, d = 50 + Math.random() * 60;
+    s.className = 'bb-spark';
+    s.style.setProperty('--dx', Math.cos(a) * d + 'px');
+    s.style.setProperty('--dy', Math.sin(a) * d + 'px');
+    s.style.setProperty('--sh', Math.floor(Math.random() * 360));
+    b.appendChild(s);
+    setTimeout(() => s.remove(), 850);
+  }
+}
+
+function bbClick(i, b){
+  if (bbOpened.has(i)) { showNote(i); return; }
+  if (bbSel !== i){
+    bbGrid.querySelectorAll('.bb.selected').forEach(x => x.classList.remove('selected'));
+    b.classList.add('selected'); bbSel = i;
+    bbStatus.textContent = 'Chạm thêm lần nữa để mở hộp nhé cô 🎀';
+    return;
+  }
+  b.classList.remove('selected'); b.classList.add('opening'); bbSel = -1;
+  bbBurst(b);
+  setTimeout(() => {
+    b.classList.remove('opening'); b.classList.add('opened');
+    bbOpened.add(i);
+    b.querySelector('.bb-name').textContent = (DATA.notes[i].name || 'Bạn') + ' · Đã mở ✓';
+    showNote(i);
+    bbStatus.textContent = bbOpened.size === DATA.notes.length
+      ? 'Cô đã mở hết quà rồi! 💖'
+      : `Đã mở ${bbOpened.size}/${DATA.notes.length} hộp quà`;
+  }, 900);
+}
+
 const $ = s => document.querySelector(s);
 const EXTS=['.jfif','.JFIF','.jpg','.jpeg','.png','.webp','.JPG','.JPEG','.PNG'];
 function loadImg(img,base,onOk,onFail){let i=0;img.onload=()=>onOk&&onOk();img.onerror=()=>{i++;if(i<EXTS.length)img.src=base+EXTS[i];else if(onFail)onFail()};img.src=base+EXTS[0]}
-const colors=['#fff1a8','#ffd8dd','#d9f2dc','#dcecff','#f5dfff'];
 $('#introName').textContent=DATA.teacher;
 $('#greet').textContent=DATA.greeting;
 $('#sign').textContent='Lớp '+DATA.className;
@@ -306,41 +378,6 @@ function finishLetter(){if(finished)return;finished=true;clearTimeout(typingTime
 function typeLetter(){if(finished)return;const text=DATA.letter.join('\n');let i=0;let p=document.createElement('p');typed.append(p);function step(){if(i>=text.length){finishLetter();return}if(text[i]==='\n'){p=document.createElement('p');typed.append(p)}else p.textContent+=text[i];i++;typingTimer=setTimeout(step,22)}step()}
 $('#envelope').addEventListener('click',()=>{if(opened)return;opened=true;try{if(music.paused)musicBtn.click()}catch(e){}$('#envelope').classList.add('open');setTimeout(()=>{$('#intro').classList.add('hide');document.body.classList.remove('locked');$('#paper').classList.add('show');typeLetter()},1400)});
 $('#paper').addEventListener('click',finishLetter);
-const read=new Set(),wheel=$('#wheel'),spinBtn=$('#spinBtn');
-let rotation=0,spinning=false;
-function renderWheel(){
-  const n=DATA.notes.length;if(!n){spinBtn.disabled=true;$('#spinStatus').textContent='Chưa có lời nhắn để quay.';return}
-  const step=360/n;
-  wheel.style.background='conic-gradient('+DATA.notes.map((_,i)=>`${colors[i%colors.length]} ${i*step}deg ${(i+1)*step}deg`).join(',')+')';
-  DATA.notes.forEach((item,i)=>{const label=document.createElement('span');label.className='wheel-label';label.textContent=item.name;label.style.transform=`translateY(-50%) rotate(${i*step+step/2-90}deg) translateX(18px)`;wheel.append(label)});
-  const center=document.createElement('span');center.className='wheel-center';wheel.append(center)
-}
-function showNote(i){
-  const item=DATA.notes[i];read.add(i);$('#counter').textContent=`Đã đọc ${read.size}/${DATA.notes.length} lời nhắn`;
-  $('#mMsg').textContent=item.message;$('#mCredit').style.display = item.name === 'Trần Trọng' ? 'block' : 'none';
-$('#mFrom').textContent=item.name;
-  const holder=$('#mPhotos');holder.replaceChildren();
-  const updatePhotos=()=>{holder.dataset.count=String(holder.children.length);$('#mLayout').classList.toggle('no-photos',!holder.children.length)};
-  (item.photos||[]).forEach((src,j)=>{const img=document.createElement('img');img.alt=`Ảnh lời chúc của ${item.name} ${j+1}`;img.loading='lazy';loadImg(img,src,null,()=>{img.remove();updatePhotos()});img.onclick=()=>{ $('#lbImg').src=img.src;$('#lbImg').alt=img.alt;$('#lbCap').textContent=item.name;$('#lightbox').classList.add('open') };holder.append(img)});
-  updatePhotos();
-  $('#modal').classList.add('open');document.body.classList.add('locked')
-}
-renderWheel();$('#counter').textContent=`Đã đọc 0/${DATA.notes.length} lời nhắn`;
-spinBtn.onclick=()=>{
-  if(spinning||!DATA.notes.length)return;
-  spinning=true;spinBtn.disabled=true;$('#spinStatus').textContent='Vòng quay đang chọn lời nhắn…';
-  const n=DATA.notes.length,step=360/n;
-  const unread=DATA.notes.map((_,i)=>i).filter(i=>!read.has(i));
-  const pool=unread.length?unread:DATA.notes.map((_,i)=>i);
-  const index=pool[Math.floor(Math.random()*pool.length)];
-  const target=(360-(index+.5)*step)%360;
-  const current=((rotation%360)+360)%360;
-  rotation+=1800+((target-current+360)%360);
-  wheel.style.transform=`rotate(${rotation}deg)`;
-  const done=()=>{wheel.removeEventListener('transitionend',done);spinning=false;spinBtn.disabled=false;$('#spinStatus').textContent=read.size===n?'Đã mở hết lời nhắn! Cô vẫn có thể quay tiếp 💗':'';showNote(index)};
-  wheel.addEventListener('transitionend',done,{once:true});
-  setTimeout(()=>{if(spinning)done()},5300)
-};
 function closePopup(el){el.classList.remove('open');document.body.classList.remove('locked')}
 $('#closeModal').onclick=()=>closePopup($('#modal'));
 $('#modal').addEventListener('click',e=>{if(e.target.id==='modal')closePopup($('#modal'))});
