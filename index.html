@@ -55,23 +55,35 @@ section{min-height:100vh;padding:90px 20px;display:flex;flex-direction:column;al
 .skip{font-size:12px;opacity:.5;text-align:center;margin-top:10px}
 
 /* ===== VÒNG QUAY LỜI CHÚC ===== */
-  .bb-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:34px 28px;max-width:620px;margin:34px auto 10px}
-.bb{position:relative;aspect-ratio:1/1.1;cursor:pointer;transition:transform .3s}
-.bb:hover{transform:translateY(-4px)}
-.bb-body{position:absolute;left:8%;right:8%;bottom:14%;height:52%;border-radius:8px;
-  background:hsl(var(--h) 75% 72%);box-shadow:0 10px 22px rgba(0,0,0,.15)}
-.bb-body::before{content:"";position:absolute;left:50%;top:0;bottom:0;width:16%;transform:translateX(-50%);
-  background:hsl(calc(var(--h) + 180) 70% 62%)}
-.bb-lid{position:absolute;left:3%;right:3%;bottom:62%;height:16%;border-radius:6px;z-index:2;
-  background:hsl(var(--h) 75% 64%);transition:transform .6s cubic-bezier(.3,1.6,.5,1),opacity .6s}
-.bb-lid::before{content:"";position:absolute;left:50%;top:0;bottom:0;width:15%;transform:translateX(-50%);
-  background:hsl(calc(var(--h) + 180) 70% 58%)}
-.bb-bow{position:absolute;left:50%;bottom:100%;transform:translateX(-50%);width:44%;height:60%;transition:.4s}
-.bb-bow i{position:absolute;bottom:0;width:50%;height:100%;border:5px solid hsl(calc(var(--h) + 180) 70% 55%);
-  border-radius:50% 50% 0 50%}
-.bb-bow i:first-child{left:0}
-.bb-bow i:last-child{right:0;border-radius:50% 50% 50% 0}
-.bb-name{position:absolute;left:0;right:0;bottom:0;text-align:center;font-weight:600;font-size:.95rem}
+ .bb-grid{
+  display:grid;
+  width:min(620px,100%);
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:34px 28px;
+  margin:34px auto 10px;
+}
+.bb{
+  position:relative;
+  display:block;
+  width:100%;
+  height:150px;
+  padding:0;
+  border:0;
+  background:transparent;
+  cursor:pointer;
+  transition:transform .3s;
+}
+.bb-name{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  text-align:center;
+  font-weight:600;
+  font-size:.9rem;
+  line-height:20px;
+  white-space:nowrap;
+}
 .bb-card{position:absolute;left:50%;bottom:40%;transform:translate(-50%,0) scale(.4);opacity:0;font-size:2rem;z-index:1;
   transition:transform .8s ease-out,opacity .4s}
 .bb.selected{animation:bbWiggle .5s ease-in-out infinite}
